@@ -1,18 +1,34 @@
-﻿using Avalonia;
+using Avalonia;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Rhongomyniad.UI.Services;
 using System;
 
 namespace Rhongomyniad.UI;
 
 sealed class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        var services = new ServiceCollection();
+        
+        // Add logging
+        services.AddLogging(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
+        
+        ServiceRegistration.RegisterServices(services);
+        ServiceProvider = services.BuildServiceProvider();
 
-    // Avalonia configuration, don't remove; also used by visual designer.
+        BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
+    }
+
+    public static IServiceProvider ServiceProvider { get; private set; } = null!;
+
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()

@@ -1,0 +1,117 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Rhongomyniad.UI.ViewModels"
+             x:Class="Rhongomyniad.UI.Views.GameListView"
+             x:DataType="vm:GameListViewModel">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2d2d2d" Padding="20,15">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" 
+                          Text="GameVault" 
+                          FontSize="24" 
+                          FontWeight="Bold"
+                          Foreground="#ffffff"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                    <Button Command="{Binding ScanGamesCommand}"
+                            IsEnabled="{Binding !IsScanning}"
+                            Background="#4a9eff"
+                            Foreground="White"
+                            Padding="15,8">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="🔍" FontSize="14"/>
+                            <TextBlock Text="Scan Games" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding LoadGamesCommand}"
+                            IsEnabled="{Binding !IsScanning}"
+                            Background="#5a5a5a"
+                            Foreground="White"
+                            Padding="15,8">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="📁" FontSize="14"/>
+                            <TextBlock Text="Refresh" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Game List -->
+        <ScrollViewer Grid.Row="1" Margin="20">
+            <ItemsControl ItemsSource="{Binding Games}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#2d2d2d" 
+                                CornerRadius="8" 
+                                Padding="15" 
+                                Margin="0,0,0,10"
+                                BoxShadow="0 2 5 0 #40000000">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="3">
+                                    <TextBlock Text="{Binding Name}" 
+                                              FontSize="16" 
+                                              FontWeight="SemiBold"
+                                              Foreground="#ffffff"/>
+                                    <TextBlock Text="{Binding Launcher}" 
+                                              FontSize="12"
+                                              Opacity="0.7"
+                                              Foreground="#cccccc"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0">
+                                        <TextBlock Text="{Binding InstallPath}" 
+                                                  FontSize="11"
+                                                  Opacity="0.5"
+                                                  Foreground="#aaaaaa"
+                                                  TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,5,0,0">
+                                        <Border Background="#4a9eff" 
+                                                CornerRadius="4" 
+                                                Padding="8,3"
+                                                IsVisible="{Binding HasSaveProfile}">
+                                            <TextBlock Text="💾 Saves" 
+                                                      FontSize="10"
+                                                      Foreground="White"/>
+                                        </Border>
+                                        <Border Background="#9b59b6" 
+                                                CornerRadius="4" 
+                                                Padding="8,3"
+                                                IsVisible="{Binding HasConfigProfile}">
+                                            <TextBlock Text="⚙️ Config" 
+                                                      FontSize="10"
+                                                      Foreground="White"/>
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Background="#27ae60"
+                                        Foreground="White"
+                                        Padding="12,6">
+                                    <TextBlock Text="📦 Backup" FontWeight="SemiBold"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#1f1f1f" Padding="20,10">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" 
+                          Text="{Binding StatusMessage}" 
+                          Foreground="#aaaaaa"
+                          VerticalAlignment="Center"/>
+                <ProgressBar Grid.Column="1"
+                            IsVisible="{Binding IsScanning}"
+                            IsIndeterminate="True"
+                            Width="100"
+                            VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</UserControl>

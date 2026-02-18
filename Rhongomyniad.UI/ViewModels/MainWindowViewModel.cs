@@ -1,6 +1,14 @@
-﻿namespace Rhongomyniad.UI.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace Rhongomyniad.UI.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    [ObservableProperty]
+    private ViewModelBase _currentViewModel;
+
+    public MainWindowViewModel(GameListViewModel gameListViewModel)
+    {
+        _currentViewModel = gameListViewModel;
+    }
 }
