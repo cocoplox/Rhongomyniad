@@ -12,6 +12,7 @@ public class SteamScannerTest
     {
         //Setup
         HttpClient httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri("https://store.steampowered.com/api/");
         SteamStoreService steamStoreService = new(httpClient);
         var sut = new SteamGameScanner(steamStoreService);
         

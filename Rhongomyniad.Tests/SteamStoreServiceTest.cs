@@ -12,6 +12,7 @@ public class SteamStoreServiceTest
         //Dyson Sphere Program, Persona 3 Reload
         int[] ids = new[] { 1366540, 2161700 };
         var httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri("https://store.steampowered.com/api/");
         var steamStoreService = new SteamStoreService(httpClient);
         
         //Act

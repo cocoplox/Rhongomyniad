@@ -38,7 +38,7 @@ public class SteamAppData
     public int SteamAppId { get; set; }
 
     [JsonPropertyName("required_age")]
-    public JsonElement RequiredAgeRaw { get; set; }
+    private JsonElement RequiredAgeRaw { get; set; }
 
     [JsonIgnore]
     public int RequiredAge
@@ -105,7 +105,7 @@ public class SteamAppData
     public SteamRequirements PcRequirements { get; set; }
 
     [JsonPropertyName("mac_requirements")]
-    public JsonElement MacRequirementsRaw { get; set; }
+    private JsonElement MacRequirementsRaw { get; set; }
     [JsonIgnore]
     public SteamRequirements MacRequirements
     {
@@ -118,7 +118,7 @@ public class SteamAppData
     }
 
     [JsonPropertyName("linux_requirements")]
-    public JsonElement LinuxRequirementsRaw { get; set; }
+    private JsonElement LinuxRequirementsRaw { get; set; }
 
     [JsonIgnore]
     public SteamRequirements LinuxRequirements

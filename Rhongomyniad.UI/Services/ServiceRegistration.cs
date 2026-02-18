@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Rhongomyniad.Application.Services;
@@ -12,9 +13,15 @@ public static class ServiceRegistration
 {
     public static void RegisterServices(IServiceCollection services)
     {
+        //HttpClients
+        services.AddHttpClient<ISteamStoreService, SteamStoreService>(client =>
+        {
+            client.BaseAddress = new Uri("https://store.steampowered.com/api/");
+        });
         // Register concrete scanners
         services.AddScoped<SteamGameScanner>();
         services.AddScoped<EpicGameScanner>();
+        services.AddScoped<ISteamStoreService, SteamStoreService>();
         
         // Register CompositeGameScanner as factory to avoid circular dependency
         services.AddScoped<CompositeGameScanner>(provider =>

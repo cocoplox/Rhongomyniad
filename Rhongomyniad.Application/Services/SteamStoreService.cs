@@ -6,7 +6,6 @@ namespace Rhongomyniad.Application.Services;
 
 public class SteamStoreService : ISteamStoreService
 {
-    private readonly string BaseUrl = "https://store.steampowered.com/api/";
     private readonly string AppDetailsRoute = "appdetails";
     
     private readonly HttpClient _httpClient;
@@ -25,7 +24,7 @@ public class SteamStoreService : ISteamStoreService
         {
             try
             {
-                var resp = await _httpClient.GetAsync($"{BaseUrl}{AppDetailsRoute}/?appids={id}");
+                var resp = await _httpClient.GetAsync($"{_httpClient.BaseAddress}{AppDetailsRoute}/?appids={id}");
                 resp.EnsureSuccessStatusCode();
 
                 var json = await resp.Content.ReadAsStringAsync();

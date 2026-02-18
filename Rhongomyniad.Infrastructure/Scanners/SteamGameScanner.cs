@@ -22,13 +22,11 @@ public sealed class SteamGameScanner : IGameScanner
     public async Task<IReadOnlyList<Game>> ScanAsync()
     {
         // TODO: Implement Steam library scanning
-        var appIds = GetAppIds();
-        //Una vez tenemos los ids de las aplicaciones instaladas localmente, llamaremos a la api de steam, para cruzar los datos y poder tener info de las apps
+        var appIds = GetLocalAppsIds();
         var appsInfo = await _steamStoreService.GetAppDetails(appIds);
-        
+        // Mapear esta wea a algo entendible en la UI, hay que pensarlo
         var games = new List<Game>();
         return default;
-        //return Task.FromResult<IReadOnlyList<Game>>(games.AsReadOnly());
     }
 
     public Task<bool> IsLauncherInstalledAsync()
@@ -50,7 +48,7 @@ public sealed class SteamGameScanner : IGameScanner
         return Task.FromResult(false);
     }
 
-    private IEnumerable<int> GetAppIds()
+    private IEnumerable<int> GetLocalAppsIds()
     {
         //Tendremos que saber donde estan los juegos instalados =>
         var librariesPaths = GetLibrariesPaths();
