@@ -8,20 +8,20 @@ namespace Rhongomyniad.Infrastructure.Scanners;
 
 public sealed class EpicGameScanner : IGameScanner
 {
-    public GameLauncher LauncherType => GameLauncher.EpicGames;
+    public GameLauncher _launcherType => GameLauncher.EpicGames;
 
-    public Task<IReadOnlyList<Game>> ScanAsync()
+    public Task<IReadOnlyList<LocalGame>> ScanAsync()
     {
         // TODO: Implement Epic Games scanning
         var games = new List<Game>();
-        return Task.FromResult<IReadOnlyList<Game>>(games.AsReadOnly());
+        return default;
     }
 
-    public Task<bool> IsLauncherInstalledAsync()
+    public bool IsLauncherInstalledAsync()
     {
         var epicPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
             "Epic Games", "Launcher", "Engine", "Binaries", "Win64", "EpicGamesLauncher.exe");
-        return Task.FromResult(File.Exists(epicPath));
+        return File.Exists(epicPath);
     }
 }

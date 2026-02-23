@@ -1,8 +1,10 @@
 using Avalonia;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rhongomyniad.UI.Services;
 using System;
+using System.IO;
 
 namespace Rhongomyniad.UI;
 
@@ -11,7 +13,16 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        // Build configuration
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
         var services = new ServiceCollection();
+        
+        // Register configuration
+        services.AddSingleton<IConfiguration>(configuration);
         
         // Add logging
         services.AddLogging(builder =>
@@ -21,6 +32,7 @@ sealed class Program
         });
         
         ServiceRegistration.RegisterServices(services);
+        ServiceRegistration.RegisterDbContexts(services, configuration);
         ServiceProvider = services.BuildServiceProvider();
 
         BuildAvaloniaApp()

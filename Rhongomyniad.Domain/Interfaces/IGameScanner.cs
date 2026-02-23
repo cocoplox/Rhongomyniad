@@ -5,7 +5,7 @@ namespace Rhongomyniad.Domain.Interfaces;
 
 public interface IGameScanner
 {
-    GameLauncher LauncherType { get; }
-    Task<IReadOnlyList<Game>> ScanAsync();
-    Task<bool> IsLauncherInstalledAsync();
+    GameLauncher _launcherType { get; }
+    Task<IReadOnlyList<LocalGame>> ScanAsync();
+    bool IsLauncherInstalledAsync();
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Rhongomyniad.Domain.Interfaces;
 using Rhongomyniad.Domain.Responses;
 
@@ -6,13 +7,15 @@ namespace Rhongomyniad.Application.Services;
 
 public class SteamStoreService : ISteamStoreService
 {
+    private readonly ILogger _logger;
     private readonly string AppDetailsRoute = "appdetails";
     
     private readonly HttpClient _httpClient;
 
-    public SteamStoreService(HttpClient httpClient)
+    public SteamStoreService(HttpClient httpClient, ILogger<SteamStoreService> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
     }
     public async Task<Dictionary<int, SteamAppDetails>> GetAppDetails(IEnumerable<int> appIds)
     {
@@ -24,7 +27,9 @@ public class SteamStoreService : ISteamStoreService
         {
             try
             {
-                var resp = await _httpClient.GetAsync($"{_httpClient.BaseAddress}{AppDetailsRoute}/?appids={id}");
+                _logger.LogInformation($"Getting appdetails for {id}");
+                var resp = await _httpClient.GetAsync($"{AppDetailsRoute}/?appids={id}");
+                //realmente da un poco igual, la api de steam funciona raro, te devuelve un 200, y dentro de la respuesta, el esatado, succes, failed, etc
                 resp.EnsureSuccessStatusCode();
 
                 var json = await resp.Content.ReadAsStringAsync();
@@ -43,6 +48,7 @@ public class SteamStoreService : ISteamStoreService
             }
             catch (Exception e)
             {
+                _logger.LogError(e, $"Getting appdetails failed for id: {id}");
                 //Petó
                 return default;
             }

@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rhongomyniad.Application.Services;
+using Rhongomyniad.Domain.Context;
 using Rhongomyniad.Domain.Interfaces;
 using Rhongomyniad.Infrastructure.Scanners;
 using Rhongomyniad.Infrastructure.Locators;
 using Rhongomyniad.Infrastructure.Persistence;
+using Rhongomyniad.Infrastructure.Services;
 
 namespace Rhongomyniad.UI.Services;
 
@@ -18,12 +24,20 @@ public static class ServiceRegistration
         {
             client.BaseAddress = new Uri("https://store.steampowered.com/api/");
         });
+        //Register OS based services
+        if (OperatingSystem.IsWindows())
+        {
+            services.AddScoped<ISteamLibraryPathProvider, WindowsSteamLibraryPathProvider>();
+        }
+
+        services.AddScoped<ISteamFilesParser, SteamFilesParser>();
         // Register concrete scanners
         services.AddScoped<SteamGameScanner>();
         services.AddScoped<EpicGameScanner>();
-        services.AddScoped<ISteamStoreService, SteamStoreService>();
         
         // Register CompositeGameScanner as factory to avoid circular dependency
+        //Esto en realidad sobra
+        
         services.AddScoped<CompositeGameScanner>(provider =>
         {
             var scanners = new List<IGameScanner>
@@ -51,5 +65,18 @@ public static class ServiceRegistration
         // ViewModels
         services.AddSingleton<ViewModels.MainWindowViewModel>();
         services.AddSingleton<ViewModels.GameListViewModel>();
+    }
+
+    public static void RegisterDbContexts(this IServiceCollection services, IConfiguration configuration)
+    {
+        var appName = configuration["Application:Name"] ?? throw new InvalidDataException("Falta Application:Name en appsettings");
+        var basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var dbPath = Path.Combine(basePath,  appName);
+        Directory.CreateDirectory(dbPath);
+        
+        var db = Path.Combine(dbPath, $"{appName}.db");
+
+        services.AddDbContext<RhongomyniadDbContext>(opts =>
+            opts.UseSqlite("Data Source=" + db));
     }
 }

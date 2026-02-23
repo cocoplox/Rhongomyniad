@@ -1,10 +1,25 @@
-﻿using Rhongomyniad.Application.Services;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using Rhongomyniad.Application.Services;
 
 namespace Rhongomyniad.Tests;
 
 [TestFixture]
 public class SteamStoreServiceTest
 {
+    private ILogger<SteamStoreService> _logger;
+    [SetUp]
+    public void Setup()
+    {
+        var loggerMock = new Mock<ILogger<SteamStoreService>>();
+        loggerMock.Setup(l => l.Log(
+            It.IsAny<LogLevel>(),
+            It.IsAny<EventId>(),
+            It.IsAny<It.IsAnyType>(),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()));
+        _logger = loggerMock.Object;
+    }
     [Test]
     public async Task CallsApiCorrectly()
     {
@@ -13,7 +28,7 @@ public class SteamStoreServiceTest
         int[] ids = new[] { 1366540, 2161700 };
         var httpClient = new HttpClient();
         httpClient.BaseAddress = new Uri("https://store.steampowered.com/api/");
-        var steamStoreService = new SteamStoreService(httpClient);
+        var steamStoreService = new SteamStoreService(httpClient,  _logger);
         
         //Act
         var result = await steamStoreService.GetAppDetails(ids);

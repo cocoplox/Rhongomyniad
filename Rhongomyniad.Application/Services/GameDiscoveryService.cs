@@ -30,28 +30,8 @@ public sealed class GameDiscoveryService
 
     public async Task<IReadOnlyList<GameSummaryDto>> DiscoverGamesAsync()
     {
-        _logger.LogInformation("Starting game discovery");
-
-        var games = await _gameScanner.ScanAsync();
-        var discoveredGames = new List<Game>();
-
-        foreach (var game in games)
-        {
-            try
-            {
-                var gameWithProfiles = await EnrichGameWithProfilesAsync(game);
-                await _gameRepository.AddAsync(gameWithProfiles);
-                discoveredGames.Add(gameWithProfiles);
-                _logger.LogDebug("Discovered game: {GameName}", game.Name);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to process game: {GameName}", game.Name);
-            }
-        }
-
-        _logger.LogInformation("Discovered {Count} games", discoveredGames.Count);
-        return DtoMapper.ToSummaryDtos(discoveredGames);
+        var localGames = await _gameScanner.ScanAsync();
+        return [];
     }
 
     private async Task<Game> EnrichGameWithProfilesAsync(Game game)

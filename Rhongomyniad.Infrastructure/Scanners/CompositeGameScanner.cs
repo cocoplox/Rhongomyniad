@@ -5,39 +5,34 @@ using Rhongomyniad.Domain.Interfaces;
 
 namespace Rhongomyniad.Infrastructure.Scanners;
 
+/// <summary>
+/// Esta clase agrupa todos los scaneres
+/// </summary>
 public sealed class CompositeGameScanner : IGameScanner
 {
     private readonly IEnumerable<IGameScanner> _scanners;
 
-    public GameLauncher LauncherType => GameLauncher.Unknown;
+    public GameLauncher _launcherType => GameLauncher.Unknown;
 
+    //todo: Esta clase me la voy a ventilar => Cambiar por un orchestrador
     public CompositeGameScanner(IEnumerable<IGameScanner> scanners)
     {
         _scanners = scanners ?? throw new ArgumentNullException(nameof(scanners));
     }
 
-    public async Task<IReadOnlyList<Game>> ScanAsync()
+    
+    public async Task<IReadOnlyList<LocalGame>> ScanAsync()
     {
-        var allGames = new List<Game>();
-
+        var localGames = new List<LocalGame>();
         foreach (var scanner in _scanners)
         {
-            try
-            {
-                var games = await scanner.ScanAsync();
-                allGames.AddRange(games);
-            }
-            catch (Exception)
-            {
-                // Log error but continue with other scanners
-            }
+            localGames.AddRange(await scanner.ScanAsync());
         }
-
-        return allGames.AsReadOnly();
+        return localGames;
     }
 
-    public Task<bool> IsLauncherInstalledAsync()
+    public bool IsLauncherInstalledAsync()
     {
-        return Task.FromResult(true);
+        return true;
     }
 }
